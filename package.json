@@ -8,6 +8,10 @@
     "email": "github@graysand.net",
     "copyright": "2015"
   },
+  "repository": {
+  "type": "git",
+  "url": "git://github.com/GraysandDotNet/Sprinkler"
+  },
   "dependencies": {
     "colors2": "^2.0.1-1",
     "express": "^3.4.4",
