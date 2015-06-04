@@ -1,0 +1,16 @@
+ul {
+	list-style-type: none;
+	margin:none;
+	padding:none;
+}
+
+li {
+	margin:none;
+	padding:none;
+}
+
+.zonelist {
+	border-radius: 8px;
+	background: #9BCE7D;
+	margin:4px;
+}	
