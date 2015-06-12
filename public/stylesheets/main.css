@@ -14,3 +14,23 @@ li {
 	background: #9BCE7D;
 	margin:4px;
 }	
+
+#blanket {
+background-color:#111;
+opacity: 0.65;
+*background:none;
+position:absolute;
+z-index: 9001;
+top:0px;
+left:0px;
+width:100%;
+}
+
+.addNewZone {
+	background-color: #dbdbdb;
+}
+
+.centered {
+	margin-left: auto;
+	margin-right: auto;
+}

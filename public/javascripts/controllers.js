@@ -1,42 +1,15 @@
-var sprinklerApp = angular.module('sprinklerApp', []);
+var app = angular.module('sprinklerApp', []);
 
-sprinklerApp.controller('ZoneListCtrl', function ($scope) {
-	$scope.zones = [
-	{'index': '1',
-	'name': 'Front yard left',
-	'duration': '20'},
-	{'index': '2',
-	'name': 'Front yard right',
-	'duration': '21'},
-	{'index': '3',
-	'name': 'Back yard',
-	'duration': '22'},
-	{'index': '4',
-	'name': 'Front yard left',
-	'duration': '23'},
-	{'index': '5',
-	'name': 'Front yard right',
-	'duration': '24'},
-	{'index': '6',
-	'name': 'Back yard',
-	'duration': '25'},
-	{'index': '7',
-	'name': 'Front yard left',
-	'duration': '26'},
-	{'index': '8',
-	'name': 'Front yard right',
-	'duration': '27'},
-	{'index': '9',
-	'name': 'Back yard',
-	'duration': '28'},
-	{'index': '10',
-	'name': 'Front yard left',
-	'duration': '29'},
-	{'index': '11',
-	'name': 'Front yard right',
-	'duration': '30'},
-	{'index': '12',
-	'name': 'Back yard',
-	'duration': '31'},
-	];
+app.controller('ZoneListCtrl', function ($scope) {
+	$scope.zones = [];
+	$scope.newZone = {index: '', name: '', duration: ''}
+
+	$scope.createZone = function(identity){
+			$scope.newZone.index = $scope.zones.length + 1;
+			$scope.zones.push($scope.newZone);
+			$scope.newZone = {index: '', name: '', duration: ''};
+			disable_visibility(identity);
+
+	}
+
 });
