@@ -81,14 +81,28 @@ exports.index = function (req, res) {
 
 };
 
-exports.about = function (req, res) {
-    var templateData = { title: 'About', year: new Date().getFullYear(), message: 'Your application description page.' };
+exports.about = function( req, res ) 
+{
+	var templateData =	{
+							title: 'About', 
+							year: new Date( ).getFullYear( ), 
+							message: 'Your application description page.',
+							about: 'Use this area to provide additional information'
+						};
+
     res.render('about', templateData );
 };
 
-exports.contact = function (req, res) {
+exports.contact = function( req, res ) 
+{
     res.render('contact', { title: 'Contact', year: new Date().getFullYear(), message: 'Your contact page.' });
     next();
 };
 
 
+module.exports = function( args )	//	args is of type requireArgs
+{
+	args.app.infoController = exports;	//	merge our exports into the express app as userController member data
+	
+	console.log( 'Loaded info controller' );
+}

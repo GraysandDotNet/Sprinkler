@@ -2,9 +2,9 @@
 
 exports.zones = function( req, res )
 {
-	var templateData = { title: 'zones' };
+	var templateData = { title: 'Zones' };
 	
-	res.render( 'zones/index', 
+	res.render( 'zones/zones', 
 				templateData );
 };
 

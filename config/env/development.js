@@ -5,7 +5,7 @@
 
 module.exports = 
 {
-  db: process.env.MONGO_DB,
+  db: "mongodb://localhost/Sprinklers",
 
  
   twitter:	{

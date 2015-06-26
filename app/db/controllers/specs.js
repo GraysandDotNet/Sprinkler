@@ -192,3 +192,10 @@ exports.spec = function (req, res) {
     });
 
 }
+
+module.exports = function( args )	//	args is of type requireArgs
+{
+	args.app.specsController = exports;	//	merge our exports into the express app as userController member data
+	
+	console.log( 'Loaded specs controller' );
+}

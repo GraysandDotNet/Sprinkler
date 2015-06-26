@@ -154,16 +154,17 @@ function connect( config )
  */
 module.exports = function( args ) //	args is of type requireArgs
 {
+	config = args.config;
+	utils = args.utils;
+
 	//	initialize mongo connection
-	connect( args.config );
+	connect( config );
 	
 	//	attach all models
 	var path = require( 'path' );
-	args.utils.requireAll( path.join( __dirname, 'models' ), args );
+	utils.requireAll( path.join( __dirname, 'models' ), args );
 	
-	args.utils.requireAll( path.join( __dirname, 'controllers' ), args );
-	
-	args.utils.requireAll( path.join( __dirname, 'routes' ), args );
-	
-	console.log( 'Routes initialized' );
+	utils.requireAll( path.join( __dirname, 'controllers' ), args );
+		
+	console.log( 'Database Models and Controllers initialized' );
 };

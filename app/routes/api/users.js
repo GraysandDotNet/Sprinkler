@@ -2,7 +2,7 @@
 /*!
  * Module dependencies.utilsObj
  */
-
+var passport = require( 'passport');
 // Note: We can require users, articles and other cotrollers because we have
 // set the NODE_PATH to be ./app/controllers (package.json # scripts # start)
 
@@ -18,20 +18,20 @@
 module.exports = function( args )	//	args is of type requireArgs
 {
 	app = args.app;
-	passport = args.passport;
+	
 
 	users = app.userController;
-
-	var auth = require( './middlewares/authorization' );
 	
-	var zoneAuth = [auth.requiresLogin /* add another auth param to arry here */];
+	//	Auth middleware as setup by app/auth/index.js:
+	var loggedInOnly = [passport.authMiddleware.requiresLogin /* add another auth param to arry here */];
 
 	// user routes
-	app.get('/login', users.login);
-	app.get('/signup', users.signup);
+	app.get( '/login',  users.login);
 	app.get( '/logout', users.logout );
+	
+	app.get( '/signup', users.signup );
 
-	app.post('/users', users.create);
+	app.post( '/users', users.create);
 	
 	app.post( '/users/session',
 				passport.authenticate( 'local', 
@@ -40,21 +40,22 @@ module.exports = function( args )	//	args is of type requireArgs
 										} ), 
 				users.session );
 
-	app.get('/users/:userId', users.show);
+	app.get( '/users/:userId', 
+			 users.show );
 	
 	//	Github OAuth2 routes: authenticate & validation callback:
 	app.get( '/auth/github',
-			passport.authenticate('github', { failureRedirect: '/login'
-											} ), 
-			users.signin );
+			 passport.authenticate('github', { failureRedirect: '/login'
+											 } ), 
+			 users.signin );
 
-	app.get('/auth/github/callback',
-			passport.authenticate('github', { failureRedirect: '/login'
-											} ), 
-			users.authCallback );
+	app.get( '/auth/github/callback',
+			 passport.authenticate('github', { failureRedirect: '/login'
+											 } ), 
+			 users.authCallback );
 	
 	//	Google API Oauth2 routes:Spec oauth2 scopes to the defined user-profile & email scopes
-	app.get('/auth/google',
+	app.get( '/auth/google',
 			passport.authenticate('google', { failureRedirect: '/login',
 											  scope: [	'https://www.googleapis.com/auth/userinfo.profile',
 														'https://www.googleapis.com/auth/userinfo.email'
@@ -62,7 +63,7 @@ module.exports = function( args )	//	args is of type requireArgs
 											} ), 
 			users.signin );
 
-	app.get('/auth/google/callback',
+	app.get( '/auth/google/callback',
 			passport.authenticate('google', { failureRedirect: '/login'
 											} ), 
 			users.authCallback );
@@ -80,12 +81,6 @@ module.exports = function( args )	//	args is of type requireArgs
 			users.authCallback );
 
 	app.param( 'userId', users.load);
-
-
-	// home route ( should'nt live here, this is temp):
-	zones = app.zoneController;
-	app.get('/', zones.zones );	//	perhaps we'll default to current status, once that exists?
-
 
 
 	/**
@@ -115,5 +110,5 @@ module.exports = function( args )	//	args is of type requireArgs
 									});
 	} );
 
-	console.log( 'Loaded user routes' );
+	console.log( 'User routes initialized' );
 }

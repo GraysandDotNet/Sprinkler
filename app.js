@@ -22,40 +22,27 @@ var requireArgs = { app: app, passport: passport, config: config, utils: utils }
 //	app/db/index.js: Initialize and startup the database and load all models (currently also does routes?)
 require( './app/db'  )( requireArgs );		//	initialize mongoose and mongo.
 
-// app/express/index.js: Bootstrap application settings
-require( './app/express' )( requireArgs );
-
 // config/passport/index.js: Bootstrap passport config
 require( './app/auth' )( requireArgs );
 
-// Bootstrap routes
-//require( './app/routes' )( requireArgs );
+// app/express/index.js: Bootstrap application settings
+require( './app/express' )( requireArgs );
 
+// Bootstrap routes, which must be done after passport 
+require( './app/routes' )( requireArgs );
 
 console.log(app.packageJson.name.bold, 
              'v', app.packageJson.version, 
              '(c)', app.packageJson.author.name.grey, app.packageJson.author.copyright.grey,
              'Started:', app.getCurrentTime());
 
-
-//  load our local route controllers
-//var auth = require( './controllers/auth.js' );
-var routes = require( './controllers/get' );
-var specs = require( './controllers/specs' );
-
-//  try out the table-driven commonHandler :
-//app.get('/', routes.commonHandler);
-app.get('/about', routes.commonHandler);
-app.get('/contact', routes.commonHandler);
-app.get('/spec', specs.spec);
-
-specs.ensureSpecs();
-
 // Extract environment variables, and setup webserver/template-parser
 //  as set in the PiZone.sln on VS, 
 //  although still unsure how to set envirionment vars on Linus on Pi 
-var webserverPort = process.env.PORT;
-app.set( 'port', webserverPort );
+var webserverPort = 8080;
+
+app.listen( webserverPort );
+/*app.set( 'port', webserverPort );
 
 //  create the webserver object for this app: 
 var webserver = require('http').createServer(app);
@@ -66,7 +53,7 @@ webserver.listen(webserverPort,
     {
         console.log( app.packageJson.name.bold, 'listening on port', webserverPort);
     });
-
+*/
 //  Now let's setup our periodic internal notification timer:
 
 var timerTick = 30 * 1000;  //  nyquist for once every minute :-)
