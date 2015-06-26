@@ -7,11 +7,6 @@ var mongoose = require( 'mongoose' );
 var LocalStrategy = require( 'passport-local' ).Strategy;
 var User = mongoose.model( 'User' );
 
-var local = require( './passport/local' );
-var google = require( './passport/google' );
-var windows = require( './passport/liveid.js' );
-var github = require( './passport/github' );
-
 /*
  *  Generic require login routing middleware
  */
@@ -48,6 +43,7 @@ exports.user =
 module.exports = function( args ) //	args is of type requireArgs
 {
 	passport = args.passport;
+	config = args.config;
 
 	// serialize sessions
 	passport.serializeUser( function( user, done )
@@ -64,7 +60,13 @@ module.exports = function( args ) //	args is of type requireArgs
 				done( err, user )
 			} );
 	} );
-		
+	
+	
+	var local = require( './passport/local' );
+	var google = require( './passport/google' )(config.auth.google);
+	var windows = require( './passport/liveid' )(config.auth.liveId);
+	var github = require( './passport/github' )(config.auth.github);
+
 	// use these strategies
 	passport.use( local );
 	passport.use( github );

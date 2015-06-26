@@ -7,46 +7,23 @@ var path = require( 'path' );
 var extend = require( 'util' )._extend;
 
 
-// Read env.json file, if it exists, load the id's and secrets from that
-// Note that this is only in the development env
-// it is not safe to store id's in files
-function loadDefaults( dir )
-{
-	var fs = require( 'fs' );
-	var envFile = path.join( dir, 'env.json' );
-	
-	if( fs.existsSync( envFile ) )
-	{
-		var env = fs.readFileSync( envFile, 'utf-8' );
-		env = JSON.parse( env );
-		Object.keys( env ).forEach( function( key )
-		{
-			process.env[key] = env[key];
-		} );
-	}
-}
-
 var envDir = path.join( __dirname, 'env' );
+// read and parse the env file, to make available as local object:
+var envJson = require( path.join( envDir , 'env.json' ) );		//	read the file
+envJson.root = path.normalize( path.join( __dirname, '..' ) );	//	add in the local path as root
+//	and any environment specific overrides:
+var development = require( path.join( envDir , 'development.js' ));
+var test = require( path.join( envDir , 'test.js' ));
+var production = require( path.join( envDir , 'production.js' ));
 
-loadDefaults( envDir );
-
-var development = require( './env/development' );
-var test = require( './env/test' );
-var production = require( './env/production' );
-
-var defaults = 
- {
-	root: path.normalize( path.join( __dirname, '..' ) )
-};
 
 /**
  * Expose based on NODE_ENV
  */
-
 module.exports = 
 {
-	development: extend( development, defaults ),
-	test: extend( test, defaults ),
-	production: extend( production, defaults )
+	development: extend( development, envJson ),
+	test: extend( test, envJson ),
+	production: extend( production, envJson )
 
 }[process.env.NODE_ENV || 'development'];

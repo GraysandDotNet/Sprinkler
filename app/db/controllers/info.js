@@ -90,13 +90,13 @@ exports.about = function( req, res )
 							about: 'Use this area to provide additional information'
 						};
 
-    res.render('about', templateData );
+    res.render('info/about', templateData );
 };
 
 exports.contact = function( req, res ) 
 {
-    res.render('contact', { title: 'Contact', year: new Date().getFullYear(), message: 'Your contact page.' });
-    next();
+	res.render( 'info/contact', 
+	{ title: 'Contact', year: new Date( ).getFullYear( ), message: 'Your contact page.' } );
 };
 
 

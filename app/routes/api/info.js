@@ -9,8 +9,8 @@ module.exports = function( args )	//	args is of type requireArgs
 	
 	info = app.infoController;
 	
-	app.get( '/', info.about );
-	app.get( '/contact', info.commonHandler );
+	app.get( '/about', info.about );
+	app.get( '/contact', info.contact );
 
 	console.log( 'Info routes initialized' );
 }

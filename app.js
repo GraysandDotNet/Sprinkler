@@ -36,24 +36,10 @@ console.log(app.packageJson.name.bold,
              '(c)', app.packageJson.author.name.grey, app.packageJson.author.copyright.grey,
              'Started:', app.getCurrentTime());
 
-// Extract environment variables, and setup webserver/template-parser
-//  as set in the PiZone.sln on VS, 
-//  although still unsure how to set envirionment vars on Linus on Pi 
-var webserverPort = 8080;
 
-app.listen( webserverPort );
-/*app.set( 'port', webserverPort );
+app.listen( config.webserver.port );
+console.log( app.packageJson.name.bold, 'listening on port', config.webserver.port );
 
-//  create the webserver object for this app: 
-var webserver = require('http').createServer(app);
-// and begin listening on the configured port:
-//  note: the webserver object will invoke the app defined routes when client connects
-webserver.listen(webserverPort, 
-    function () 
-    {
-        console.log( app.packageJson.name.bold, 'listening on port', webserverPort);
-    });
-*/
 //  Now let's setup our periodic internal notification timer:
 
 var timerTick = 30 * 1000;  //  nyquist for once every minute :-)
