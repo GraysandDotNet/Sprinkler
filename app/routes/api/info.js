@@ -11,6 +11,8 @@ module.exports = function( args )	//	args is of type requireArgs
 	
 	app.get( '/about', info.about );
 	app.get( '/contact', info.contact );
+	app.get( '/weather', info.weather );
+	app.get( '/history', info.history );
 
 	console.log( 'Info routes initialized' );
 }

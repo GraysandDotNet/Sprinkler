@@ -100,6 +100,18 @@ exports.contact = function( req, res )
 };
 
 
+exports.history = function( req, res )
+{
+	res.render( 'info/history', 
+	{ title: 'History', year: new Date( ).getFullYear( ), message: 'Watering history.' } );
+};
+
+exports.weather = function( req, res )
+{
+	res.render( 'info/weather', 
+	{ title: 'Weather', year: new Date( ).getFullYear( ), message: 'Weather history' } );
+};
+
 module.exports = function( args )	//	args is of type requireArgs
 {
 	args.app.infoController = exports;	//	merge our exports into the express app as userController member data

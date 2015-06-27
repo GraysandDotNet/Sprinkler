@@ -8,6 +8,30 @@ exports.zones = function( req, res )
 				templateData );
 };
 
+exports.groups = function( req, res )
+{
+	var templateData = { title: 'Groups' };
+	
+	res.render( 'zones/groups', 
+				templateData );
+};
+
+exports.schedules = function( req, res )
+{
+	var templateData = { title: 'Schedules' };
+	
+	res.render( 'zones/schedules', 
+				templateData );
+};
+
+exports.status = function( req, res )
+{
+	var templateData = { title: 'Status' };
+	
+	res.render( 'zones/status', 
+				templateData );
+};
+
 var utils;	//	we need to retain a reference to the passed in args, since utils is used in our exported methods
 
 module.exports = function( args )	//	args is of type requireArgs

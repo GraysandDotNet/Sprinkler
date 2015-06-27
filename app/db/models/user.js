@@ -18,7 +18,6 @@ var authEnum =
 var authProviders = 
 	[
 		'github',
-		'facebook',
 		'google',
 		'live'
 	];
@@ -30,10 +29,11 @@ var authProviders =
 var UserSchema = new Schema(
 	{
 		priv: { type: authEnum, default: authEnum.user },
+		
+		username: { type: String, default: '' },
 
 		name: { type: String, default: '' },
 		email: { type: String, default: '' },
-		username: { type: String, default: '' },
 
 		hashed_password: { type: String, default: '' },
 		salt: { type: String, default: '' },
@@ -85,7 +85,7 @@ UserSchema.path( 'name' ).validate( function( name )
 
 }, 'Name cannot be blank');
 
-
+/*
 //	email: Simple Validator: Field must not be blank
 UserSchema.path( 'email' ).validate( function( email ) 
 {
@@ -118,6 +118,7 @@ UserSchema.path( 'email' ).validate( function( email, fn )
 	}
 }, 'Email already exists');
 
+ */
 
 //	email: Simple Validator: Field must not be blank
 UserSchema.path( 'username' ).validate( function( username ) 

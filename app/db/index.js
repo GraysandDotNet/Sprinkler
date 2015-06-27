@@ -101,7 +101,52 @@ var onDisconnected = function()
 var onOpen = function()
 {
 	console.log( 'Database Opened'.bold, mongoose.connections[0].name );
+	
+	//	make sure that an admin user exists: 
+	var User = mongoose.model( 'User' );
+	
+	//	look for a local user:
+	var options = {
+					criteria: { username: 'admin' },
+					select: 'username'
+				 };
+	
+	//	invoke the UserSchema.static function 'load' 
+	//	from \app\models\user.js
+	User.load( options, 
+			function( err, user )
+	{
+		if( err )
+		{
+			console.log( err );
+		}
+		
+		if( !user )
+		{
+			//	db does not have an admin user, create one:
+			var adminUser = new User( {
+										username: 'admin', 
+										password: 'admin',
+										email: 'admin@sprinkler.pi',
+										name: 'Administrator',
+										priv: 2,
+										provider: 'local'
+									} );
+			adminUser.save( function( err )
+			{
+				if( err )
+				{
+					console.log( err );
+				}
+				else
+				{
+					console.log( 'Created default admin user' );
+				}
+			} );
+		}
+	} );
 }
+
 var onClose = function()
 {
 	console.log( 'Database Closed'.bold, mongoose.connections[0].name );

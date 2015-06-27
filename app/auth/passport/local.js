@@ -10,12 +10,12 @@ var User = mongoose.model('User');
 /**
  * Expose  : Find by email.  I'd also like a find by username
  */
-module.exports = new LocalStrategy( {	usernameField: 'email',
+module.exports = new LocalStrategy( {	usernameField: 'username',
 										passwordField: 'password'
 									},
-	function( email, password, done ) 
+	function( username, password, done ) 
 	{
-		var options = { criteria: { email: email },
+		var options = { criteria: { username: username },
 						select: 'name username email hashed_password salt'
 					  };
 		//	invoke the UserSchema.static function 'load' 
