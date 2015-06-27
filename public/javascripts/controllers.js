@@ -1,15 +1,32 @@
-var app = angular.module('sprinklerApp', []);
+var app = angular.module("sprinklerApp", []);
 
-app.controller('ZoneListCtrl', function ($scope) {
-	$scope.zones = [];
-	$scope.newZone = {index: '', name: '', duration: ''}
+app.controller("zoneCtrl", function ($scope) {
+	$scope.zoneList = [];
+	$scope.zoneNew = {name: '', vis: false}
+	$scope.zoneAddVis = false;
 
-	$scope.createZone = function(identity){
-			$scope.newZone.index = $scope.zones.length + 1;
-			$scope.zones.push($scope.newZone);
-			$scope.newZone = {index: '', name: '', duration: ''};
-			disable_visibility(identity);
+	$scope.zoneCreate = function(identity){
+		$scope.zoneList.push($scope.zoneNew);
+		$scope.zoneNew = {name: '', vis: false};
+		$scope.zoneAddVis = false;
+	}
 
+	$scope.delete = function(index){
+		$scope.zoneList.splice(index, 1);
+	}
+
+	$scope.startEdit = function(index){
+		$scope.zoneList[index].vis = true;
+	}
+
+	$scope.endEdit = function(identity, index){
+		$scope.zoneList[index].name = $scope.zoneNew.name;
+		$scope.zoneNew = {name: '', duration: '', vis: false};
+		$scope.zoneList[index].vis = false;
+	}
+
+	$scope.startAdd = function(){
+		$scope.zoneAddVis = true;
 	}
 
 });
