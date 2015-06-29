@@ -3,7 +3,10 @@ var app = angular.module("sprinklerApp", []);
 app.controller("zoneCtrl", function ($scope) {
 	$scope.zoneList = [];
 	$scope.zoneNew = {name: '', vis: false}
-	$scope.zoneAddVis = false;
+    $scope.zoneAddVis = false;
+    
+    $scope.programList = [];
+    $scope.programNew = {name: '', groups: [], vis: false}
 
 	$scope.zoneCreate = function(identity){
 		$scope.zoneList.push($scope.zoneNew);
@@ -27,6 +30,12 @@ app.controller("zoneCtrl", function ($scope) {
 
 	$scope.startAdd = function(){
 		$scope.zoneAddVis = true;
-	}
+    }
+
+    $scope.programCreate = function (identity) {
+        $scope.programList.push($scope.programNew);
+        $scope.programNew = { name: '', vis: false };
+        $scope.zoneAddVis = false;
+    }
 
 });
