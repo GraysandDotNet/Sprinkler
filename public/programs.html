@@ -1,0 +1,53 @@
+<html ng-app="sprinklerApp">
+
+<head>
+	<title>MySprinklers</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+	<!-- More Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<!-- Adrian's additional CSS -->
+	<link href="stylesheets/main.css" rel="stylesheet"/>
+	<!-- Angular -->
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<!-- Angular controllers -->
+	<script src="javascripts/controllers.js"></script>
+</head>
+
+<body ng-controller="zoneCtrl">
+	<div>
+		<p>You have {{zoneList.length}} sprinkler zone{{zoneList.length == 1 ? "" : "s"}}.</p>
+	</div>
+
+	<ul>
+		<li ng-repeat="zone in zoneList">
+			<p>{{$index + 1}}. {{zone.name}}</p>
+	
+			<button ng-click="startEdit($index)">Edit</button>
+			<button ng-click="delete($index)">Delete</button>
+
+			<div ng-show="zoneList[$index].vis">
+				<form name="zoneEdit" ng-Submit="endEdit(zoneEdit, $index)">
+					<input required type="text" placeholder="{{zoneList[$index].name}}" ng-model="zoneNew.name"/>
+
+					<button type="submit" class="btn btn-default">Done</button>
+				</form>
+			</div>
+		</li>
+	</ul>
+
+	<button ng-click="startAdd()">Add zone</button>
+
+	<div ng-show="zoneAddVis">
+		<form name="zoneAdd" ng-Submit="zoneCreate('zoneAdd')">
+			<input required type="text" placeholder="Zone {{zoneList.length+1}}" ng-model="zoneNew.name"/>
+
+			<button type="submit">Done</button>
+		</form>
+	</div>
+
+	<br><br>
+
+	<button>Save This Forever</button>
+</body>
+</html>
