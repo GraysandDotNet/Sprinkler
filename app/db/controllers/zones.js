@@ -37,10 +37,10 @@ exports.newZone = function( req, res )
 		if( err )
 		{
 			console.dir( err );
-			return res.send( err );
+			return res.status( 500 ).send( err );
 		}
-				
-		//	creat as new zone if not found in db:
+		
+		//	create as new zone if not found in db:
 		if( !zone )
 		{
 			zone = new Zone( {
@@ -48,6 +48,8 @@ exports.newZone = function( req, res )
 								name: req.param( 'name' ) ,		
 								tLastChange: Date.now( )
 							} );
+
+			res.status( 201 );	//	201: Created new resource
 		}
 		
 		//	and save the zone we now have 
@@ -57,7 +59,7 @@ exports.newZone = function( req, res )
 			if( err )
 			{
 				console.dir( err );
-				return res.send( 500, err );
+				return res.status( 500 ).send( err );
 			}
 			return res.json( zone );	
 		} );	
@@ -75,7 +77,7 @@ exports.getAll = function( req, res )
 		if( err )
 		{
 			console.dir( err );
-			return res.send( err );
+			return res.status( 500 ).send( err );
 		}
 		return res.json( zones );
 	} );
@@ -87,13 +89,16 @@ exports.getZone =  function( req, res )
 	var zoneNum = req.params.id;
 	console.log( 'Retrieve single zone', zoneNum );
 	
+	//	kosherize to work only with valid zone numbers, to prevent contraint throwing an onReject
+	if( !Zone.validZone( zoneNum ) )
+		return res.status( 400 ).send( 'Zone must be in range 1-16' );
 
 	Zone.loadByNumber( zoneNum, function( err, zone ) 
 	{
 		if( err )
 		{
 			console.dir( err );
-			return res.send( err );
+			return res.status( 500 ).send( err );
 		}
 		
 		res.json( zone );		
@@ -115,7 +120,7 @@ exports.updateZone = function( req, res )
 		if( err )
 		{
 			console.dir( errot );
-			res.send( err );
+			res.status( 500 ).send( err );
 		}
 		
 		//	udpate the fields in the retrieved zone with the user-supplied values:			
@@ -128,7 +133,7 @@ exports.updateZone = function( req, res )
 			if( err )
 			{
 				console.dir( err );
-				res.send( err );
+				res.status( 500 ).send( err );
 			}
 			
 			res.json( zone );
@@ -141,16 +146,36 @@ exports.deleteZone = function( req, res )
 {
 	var zoneNum = req.params.id;
 	console.log( 'Delete single zone', zoneNum);
-
-	Zone.remove( { number: zoneNum }, function( err )
+	
+	//	kosherize to work only with valid zone numbers, to prevent contraint throwing an onReject
+	if( !Zone.validZone( zoneNum ) )
+		return res.status( 400 ).send( 'Zone must be in range 1-16' );
+	
+	Zone.loadByNumber( zoneNum, function( err, zone )
 	{
 		if( err )
 		{
 			console.dir( err );
-			res.send( err );
+			res.status( 500 ).send( 'Zone', zoneNum, 'not found' );
 		}
 		
-		res.json( "deleted" );
+		if( !zone )
+		{
+			res.status( 400 ).json( );	//	400: bad request, no such zone
+		}
+		else
+		{			
+			Zone.remove( { _id: zone._id }, function( err )
+			{
+				if( err )
+				{
+					console.dir( err );
+					res.status( 500 ).send( 'Zone', zoneNum, 'error' );
+				}
+				
+				res.status( 410 ).json( );		//	410: resource gone
+			} );
+		}
 	} );
 };
 
