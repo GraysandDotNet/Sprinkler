@@ -6,7 +6,7 @@
 var mongoose = require('mongoose');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var User = mongoose.model('User');
-
+var url = require( 'url' );
 /**
  * Expose
  */
@@ -36,9 +36,15 @@ module.exports = function( auth )
 			
 			if( !user )
 			{
+				var photo = '';
+				var googleData = profile._json;
+					if( googleData )
+						photo = googleData.image.url; // url.parse( googleData.image.url );
+
 				//	if we haven't found user in local db, instantiate from provider data
 				user = new User( {
 									name: profile.displayName,
+									avatar: photo, 
 									email: profile.emails[0].value,
 									username: profile.username,
 									provider: 'google',

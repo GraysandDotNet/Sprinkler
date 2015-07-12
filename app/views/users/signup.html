@@ -1,7 +1,7 @@
 {% extends 'auth.html' %}
 
 {% block auth %}
-  <form action="/users" method="post" role="form" class="form-horizontal">
+  <form action="/signup" method="post" role="form" class="form-horizontal">
     <input type="hidden" name="_csrf" value="{{ csrf_token }}">
 
     <div class="form-group">
@@ -34,9 +34,7 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button class="btn btn-primary" type="submit">Sign up</button>
-        &nbsp; or &nbsp;
-        <a href="/login" class="show-login">Log in</a>
+        <button class="btn btn-primary" type="submit">Register</button>
       </div>
     </div>
   </form>

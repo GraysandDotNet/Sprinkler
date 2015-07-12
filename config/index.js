@@ -22,8 +22,8 @@ var production = require( path.join( envDir , 'production.js' ));
  */
 module.exports = 
 {
-	development: extend( development, envJson ),
-	test: extend( test, envJson ),
-	production: extend( production, envJson )
+	development: extend( envJson, development ),
+	test: extend( envJson, test ),
+	production: extend( envJson , production )
 
 }[process.env.NODE_ENV || 'development'];

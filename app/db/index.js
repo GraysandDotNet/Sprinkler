@@ -1,5 +1,5 @@
 ﻿
-//	BUG:  First time crash is mongo not running at startup
+//	BUG:  First time crash if mongo not running at startup
 /*
  * 
  *  Environment variables used to start mongo daemon if not running
@@ -12,37 +12,12 @@
 var path = require( 'path' );
 var fs = require( 'fs' );
 
-/*
+var exec = require( 'child_process' ).exec;
 var spawn = require( 'child_process' ).spawn;
-/*
-			var mongoProcess = path.join( process.env.MongoDir, process.env.MongoDaemon );
-			var mongoArgs = process.env.MongoArgs;
-			var logDir = ".\\";
-			var stdoutFn = path.join( logDir, 'mongoDbOout.log');
-			var stdErrFn = path.join( logDir, 'mongoDbErr.log');
-			var mongoStdOut = fs.openSync( stdoutFn, 'a' );
-			var mongoStdErr = fs.openSync( stdErrFn, 'a' );
-						
-			//	attempt to  startup the db, using the specificed environmnent variables
-			var mongo = spawn( mongoProcess, 
-								[ '----dbpath', '.\data\db'],
-								{	detached: true,
-									cwd: process.env.mongodir,
-									stdio: ['ignore', mongoStdOut, mongoStdErr]
-								} );
-			
-			console.dir( mongo );
-			
-			console.log( 'Spawned', process.env.MongoDaemon, 'PID', mongo.pid );
-			mongo.unref( );
-
-			var retryMs = 2 * 1000;
-			setTimeout( initializeDatabase, retryMs );
-			*/
 
 var mongoose = require( 'mongoose' );
 
-// Generatl information re mongoose connection practice, 
+// General information re mongoose connection practice, 
 //	see http://theholmesoffice.com/mongoose-connection-best-practice/
 /* 
  * Mongoose Connection is a node.js EventEmitter,
@@ -95,9 +70,13 @@ function getRetryTimeout()
 var onDisconnected = function()
 {
 	console.log( 'Database disconnected:'.red, mongoose.connections[0].name );
-	setTimeout( connect, getRetryTimeout() );
+	setTimeout( connect, getRetryTimeout( ) );
+	connect( );
 }
 
+/*
+ * When database connection is established, check to ensure that the local admin user exists:
+ */
 var onOpen = function()
 {
 	console.log( 'Database Opened'.bold, mongoose.connections[0].name );
@@ -167,6 +146,7 @@ process.on( 'SIGINT', function()
 	} );
 }); 
 
+//	add the above event-handlers to the mongoose connection object
 mongoose.connection.on( 'connecting', onConnecting );
 mongoose.connection.on( 'connected', onConnected );
 mongoose.connection.on( 'error', onError );
@@ -174,13 +154,46 @@ mongoose.connection.on( 'disconnected', onDisconnected );;
 mongoose.connection.on( 'open', onOpen );
 mongoose.connection.on( 'close', onClose );
 
+
+//	I was trying to use this function to ensure that Mongo is running.
+//	Sadly, this does not work. 
+//	Sp the better thing to do is just install mongo as a service. 
+function startDb( mongoDb )
+{
+	if( ( mongoDb.exe == undefined ) ||
+		( mongoDb.args == undefined ) ||
+		( mongoDb.dir == undefined ) )
+		return;
+	
+/*
+	var logDir = ".\\";
+	var stdoutFn = path.join( logDir, 'mongoDbOout.log' );
+	var stdErrFn = path.join( logDir, 'mongoDbErr.log' );
+	var mongoStdOut = fs.openSync( stdoutFn, 'a' );
+	var mongoStdErr = fs.openSync( stdErrFn, 'a' );
+	
+	//	attempt to  startup the db, using the specified environmnent variables
+	var mongo = spawn(	mongoDb.exe, 
+						mongoDb.args,
+						{ detached: true,
+							cwd: mongoDb.dir,
+							stdio: ['ignore', mongoStdOut, mongoStdErr]
+						} );
+	
+	console.dir( mongo );
+	
+	console.log( 'Spawned', process.env.MongoDaemon, 'PID', mongo.pid );
+	mongo.unref( );
+*/	
+}
+
 var db = null;
-function connect( config )
+function connect( mongoDb )
 {
 	//	config is provided upon initial require from main app.js
 	//	in subsequent reconnect calls, config is absent
-	if( config != undefined )
-		db = config.db;
+	if( mongoDb != undefined )
+		db = config.db.url;
 	
 	console.log( 'Requesting connection to', db );
 	
@@ -201,9 +214,12 @@ module.exports = function( args ) //	args is of type requireArgs
 {
 	config = args.config;
 	utils = args.utils;
+	
+	//	ensure mongo is running:
+	startDb( config.db );
 
-	//	initialize mongo connection
-	connect( config );
+	//	initialize mongo connection:
+	connect( config.db );
 	
 	//	attach all models
 	var path = require( 'path' );

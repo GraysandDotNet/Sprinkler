@@ -10,13 +10,31 @@ var User = mongoose.model( 'User' );
 /*
  *  Generic require login routing middleware
  */
-exports.requiresLogin = function( req, res, next )
+exports.loggedIn = function( req, res, next )
 {
+	//	allow this request to proceed only for logged in valid users
 	if( req.isAuthenticated( ) )
-		return next( )
+		return next( );
+	
+	//	if not yet authenitcated, then redirect to the login page:
 	if( req.method == 'GET' )
-		req.session.returnTo = req.originalUrl
+		req.session.returnTo = req.originalUrl;
+
 	res.redirect( '/login' )
+}
+
+exports.notLoggedIn = function( req, res, next )
+{
+	//	allow this to proceed only for users not yet authenticated:	
+	if( !req.isAuthenticated( ) )
+		return next( );
+
+	//	authenticated users attempting to access this page directly
+	//	are redirected to the logged-in status page
+	if( req.method == 'GET' )
+		req.session.returnTo = req.originalUrl;
+	
+	res.redirect( '/status' )
 }
 
 /*
@@ -45,12 +63,16 @@ module.exports = function( args ) //	args is of type requireArgs
 	passport = args.passport;
 	config = args.config;
 
-	// serialize sessions
+	// serialize user for storage within passport.
+	//	We store only the mongo id
 	passport.serializeUser( function( user, done )
 	{
 		done( null, user.id )
 	} );
 	
+	//	Deserialize the user from passpoort, and hand to the done callback.
+	//	Given just the id of a user, this will load the full user from the database
+	//	and pass to the done callback.
 	passport.deserializeUser( function( id, done )
 	{
 		User.load( 

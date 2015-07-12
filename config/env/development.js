@@ -5,8 +5,12 @@
 
 module.exports = 
 {
-  db: "mongodb://localhost/Sprinklers",
-
+	db: {
+		url:  "mongodb://localhost/Sprinklers", 
+		dir: "C:\\Program Files\\MongoDB\\Server\\3.0\\bin\\", 
+		exe: "C:\\Program Files\\MongoDB\\Server\\3.0\\bin\\mongod.exe",
+		args: [ 'dbpath', 'C:\\Program Files\\MongoDB\\Server\\3.0\\bin\\data\\db']
+		},
  
   twitter:	{
 				clientID: process.env.TWITTER_CLIENTID,
