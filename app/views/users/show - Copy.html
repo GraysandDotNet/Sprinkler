@@ -1,0 +1,11 @@
+{% extends '../layouts/default.html' %}
+
+{% block main %}
+  <h1>{{ user.name || user.username }}</h1>
+	<h2>{{user.provider}}</h2>
+
+	{% if (req.isAuthenticated()) %}
+	<a href="/signup" class="show-signup">Add a new user</a> 
+	{% endif %}
+
+{% endblock %}
