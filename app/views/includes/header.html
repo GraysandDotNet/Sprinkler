@@ -1,3 +1,5 @@
+
+
 <nav role="navigation" class="navbar navbar-default navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
@@ -20,11 +22,28 @@
 		</ul>
 
   		<ul class="nav navbar-nav navbar-right">
-		  	{% if (req.isAuthenticated()) %}
-		  	<li><a href="{{ '/users/' + req.user.id }}">Profile</a></li>
-		  	<li><a href="/logout">Logout</a></li>
+		  	{% if (req.isAuthenticated()) %}			 
+		  		<li>
+					<a href='/users'>
+						{{req.userName}}
+	
+					{% if ( req.provider == 'live' ) %}
+		  				<img height="24" width="24" src="/images/auth/windows.png" alt="windows auth">
+		  			{% endif %}
+
+		  			{% if ( req.provider =='google' ) %}
+		  				<img height="24" width="24" src="/images/auth/google.png" alt="google auth">
+		  			{% endif %}
+
+		  			{% if ( req.provider == 'github' ) %}
+		  				<img height="24" width="24" src="/images/auth/github.png" alt="github auth">
+		  			{% endif %}
+				  </a>
+			  </li>
+
+			  	<li><a href="/logout">Logout</a></li>
 		  	{% else %}
-		  	<li><a href="/login">Login</a></li>
+			  	<li><a href="/login">Login</a></li>
 		  	{% endif %}
 		</ul>
 	</div>

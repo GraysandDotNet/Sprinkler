@@ -38,7 +38,7 @@ exports.commonHandler = function (req, res)
     req.templateInfo.appVer = req.app.packageJson.version;
     req.templateInfo.author = req.app.packageJson.author.name;
     req.templateInfo.year = req.app.packageJson.author.copyright;
-
+	
     //  and do it:
     res.render(req.templateInfo.template, 
                 req.templateInfo, 

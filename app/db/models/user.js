@@ -31,6 +31,7 @@ var UserSchema = new Schema(
 		priv: { type: authEnum, default: authEnum.user },
 		
 		username: { type: String, default: '' },
+		avatar: { type: String, default: '' },
 
 		name: { type: String, default: '' },
 		email: { type: String, default: '' },
@@ -124,7 +125,7 @@ UserSchema.path( 'email' ).validate( function( email, fn )
 UserSchema.path( 'username' ).validate( function( username ) 
 {
 	if( this.externalProviderValidation( ) )
-		fn( true );
+		return true;
 	
 	return username.length;
 
@@ -134,7 +135,7 @@ UserSchema.path( 'username' ).validate( function( username )
 UserSchema.path( 'hashed_password' ).validate( function( hashed_password ) 
 {
 	if( this.externalProviderValidation( ) )
-		fn( true );
+		return true;
 
 	return hashed_password.length;
 
@@ -240,10 +241,21 @@ UserSchema.statics =
    */
 	load: function( options, cb ) 
 	{
-		options.select = options.select || 'name username';
+		options.select = options.select || 'name username avatar provider providerData';
 		this.findOne(options.criteria)
 			.select(options.select)
 			.exec(cb);
+	},
+
+	loadByNumber : function( id, cb )
+	{
+		var options = {
+			criteria: { '_id': id },
+			select: '_id name username avatar provider providerData' 
+		};
+		this.findOne( options.criteria )
+				.select( options.select )
+				.exec( cb );
 	}
 }
 

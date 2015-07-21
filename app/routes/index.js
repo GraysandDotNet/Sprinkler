@@ -14,7 +14,7 @@ module.exports = function( args ) //	args is of type requireArgs
 	
 	//	default home-page:
 	users = app.userController;
-	app.get( '/', users.login );
+	app.get( '/', users.showLoginForm );
 
 	/**
 	* Error handling
