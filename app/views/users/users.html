@@ -6,7 +6,7 @@
 
 {% block content %}
 
-	<!-- preloadeing of userList via swig template substitution -->
+	<!-- preloading of userList via swig template substitution -->
 			
 	<!-- return a json object containing swig template data currentUser and users array -->
 	<script>
@@ -21,42 +21,145 @@
 	{% raw %}
 	<!-- Angular -->
 	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-resource.js"></script>
+	<!-- include angular-xeditable for in-place editing -->
+	<script src="javascripts/xeditable.js"></script>
 	<!-- Angular controllers -->
 	<script src="javascripts/userController.js"></script>
 
 	<div ng-app="sprinklerApp">
 		<div ng-controller="userCtrl">
-			<div>
-				<p>You have {{userList.length}} sprinkler user{{userList.length == 1 ? "" : "s"}}.</p>
-			</div>
 
-			<ul>
-				<li ng-repeat="user in userList">
-					<p>{{$index + 1}}. {{user.name}}</p>
+			<table border="0" cellpadding="10" class="table table-striped table-hover" >
+				<thead>
+					<td colspan="3">Priv</td>
+					<td>User Name</td>
+					<td>Signin</td>
+				</thead>
 
-					<button ng-click="startEdit($index)">Edit</button>
-					<button ng-click="delete($index)">Delete</button>
+				<tr ng-repeat="user in userList">
+					<form editable-form name="rowform" 
+						  onbeforesave="saveUser($data, user._id)"
+						  ng-show="rowform.$visible" 
+						  class="form-buttons form-inline" 
+						  shown="user==newUser">
+						
+						<td>
+							<!-- click this href to start edit of this row (shown only when !editing)-->
+							<a href='#'
+							   ng-show="!rowform.$visible"
+							   ng-click="rowform.$show()">
+								<span class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</td>
 
-					<div ng-show="userList[$index].vis">
-						<form name="userEdit" ng-submit="endEdit(userEdit, $index)">
-							<input required type="text" placeholder="{{userList[$index].name}}" ng-model="userNew.name" />
+						<span e-name="_id" 
+							  e-form="rowform" 
+							  ng-show="false">
+							{{user._id}}
+						</span>
 
-							<button type="submit" class="btn btn-default">Done</button>
-						</form>
-					</div>
-				</li>
-			</ul>
+						<span e-name="index" 
+							  e-form="rowform" 
+							  ng-show="false">
+							{{$index}}
+						</span>
 
-			<button ng-click="startAdd()">Add user</button>
+						<td>
+							<label ng-show="rowform.$visible">Priv</label>
 
-			<div ng-show="userAddVis">
-				<form name="userAdd" ng-submit="userCreate('userAdd')">
-					<input required type="text" placeholder="User {{userList.length+1}}" ng-model="userNew.name" />
+							<!-- editable status (select-local) -->
+							<span editable-select="user.priv"
+								  e-name="priv"
+								  e-form="rowform"
+								  e-ng-options="e.value as e.text for e in authEnum">
+								{{ userPriv(user) }}
+							</span>
+						</td>
 
-					<button type="submit">Done</button>
-				</form>
-			</div>
+						<td>
+							<a href="/auth/live">
+								<img height="24" width="24" src="/images/auth/windows.png" ng-show="providerIs(user, 'live')" alt="windows auth" />
+							</a>
+							<a href="/auth/google">
+								<img height="24" width="24" src="/images/auth/google.png" ng-show="providerIs(user, 'google')" alt="google auth" />
+							</a>
+							<a href="/auth/github">
+								<img height="24" width="24" src="/images/auth/github.png" ng-show="providerIs(user, 'github')" alt="github auth" />
+							</a>
+						</td>
 
+						<td>
+							<label for="username" ng-show="rowform.$visible">Name</label>
+								<span editable-text="user.username"
+									  e-name="username"
+									  e-form="rowform"
+									  e-ng-disabled="true"
+									  e-required>
+									{{user.username}}
+								</span>							
+						</td>
+
+						<td>
+							<label for="password" ng-show="rowform.$visible">Password</label>
+							<span editable-text="user.password"
+								  e-type="password"
+								  e-name="pswd"
+								  e-form="rowform"
+								  e-required>
+								{{user.password}}
+							</span>
+						</td>
+
+						<td>
+							<span editable-text="user.name"
+								  e-name="name"
+								  e-form="rowform"
+								  e-required>
+								{{user.name}}
+							</span>
+						</td>
+
+						<td><img height="24" width="24" ng-src="{{user.avatar}}" /></td>
+
+						<td>{{user.email}}</td>
+
+						<td>
+							<!-- click this href to submit edit of this row (shown only when !editing)-->
+							<a href='#'
+							   ng-show="rowform.$visible"
+							   ng-click="submit(user, $index)">
+								<span class="glyphicon glyphicon-ok"></span>
+							</a>
+						</td>
+						<td>
+							<!-- click this href to cancel edit of this row (shown only when !editing)-->
+							<a href='#'
+							   ng-show="rowform.$visible"							   
+							   ng-click="rowform.$cancel()">
+								<span class="glyphicon glyphicon-remove"></span>
+							</a>
+							<!-- click this icon to delete this entry (only show button if this row is not being edited) -->
+							<a href="#"
+							   ng-show="!rowform.$visible"
+							   ng-click="delete(user, $index)">
+								<span class="glyphicon glyphicon-trash"></span>
+							</a>
+						</td>
+					</form>
+				</tr>
+				
+				<tr>
+					<td colspan="6">
+						<!-- click this href to start edit of this row (shown only when !editing)-->
+						<a href='#'
+						   ng-click="startAdd()">
+							<span class="glyphicon glyphicon-plus"></span>
+						</a>
+
+					</td>
+				</tr>
+			</table>
 		</div>
 	</div>
 	{% endraw %}

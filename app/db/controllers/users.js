@@ -83,7 +83,7 @@ exports.showUsers = function( req, res )
 		
 		//	users.html is an angular page
 		res.render( 'users/users', 
-				templateData );
+					templateData );
 	} );
 };
 
@@ -158,6 +158,7 @@ exports.loginComplete = function( req, res )
 {	
 	if( req.isAuthenticated( ) )
 	{
+		res.cookie( 'userid', req.user.id );
 		res.redirect( '/status' );
 	}
 	else
@@ -166,17 +167,6 @@ exports.loginComplete = function( req, res )
 	}
 }
 
-exports.initCookieOnLogin = function( req, res, next )
-{
-	if( req.isAuthenticated( ) )
-	{
-		if( !req.cookies.userid )
-		{
-			res.cookie( 'userid', req.user.id );
-		}
-	}
-	next( );
-}
 /*
  *  User cookie middleware
  */
@@ -260,6 +250,56 @@ exports.getAll = function( req, res )
 	} );
 };
 
+//	REST API methods:
+//	return res as json to calling angular script
+
+//	create a single new <local> user:
+exports.newUser = function (req, res) 
+{
+	console.log('Create new User');	
+	
+	var username = req.param('username');
+	
+	//	look for a pre-existing user:
+	var options = {	criteria: { username: username, provider: 'local'},
+					select: 'username'
+				  };
+	//	so only create a new entry if a lookup by number doesn't find the zone
+	User.load(options, function (err, user) 
+	{		
+		if (err) 
+		{	
+			console.dir(err);
+			return res.status(500).send(err);
+		}
+		
+		//	create as new zone if not found in db:
+		if (!user) 
+		{
+			user = new User({
+				username: username,		
+				password: req.param('password') ,		
+				name: req.param('name') ,		
+				priv: req.param('priv') ,		
+				avatar: 'images/avatar.png',		
+				provider: 'local'
+			});
+			
+			res.status(201);	//	201: Created new resource
+		}
+		
+		//	and save the user we now have 
+		//	(could be either create or update)
+		user.save(function (err, user) {
+			if (err) {
+				console.dir(err);
+				return res.status(500).send(err);
+			}
+			return res.json(user);
+		});
+	});
+};
+
 //	gets specified user
 exports.getUser = function( req, res )
 {
@@ -278,7 +318,7 @@ exports.getUser = function( req, res )
 	} );
 };
 
-//	updates specified zone
+//	updates specified user
 exports.updateUser = function( req, res )
 {
 	var id = req.params.id;
@@ -293,7 +333,7 @@ exports.updateUser = function( req, res )
 		}
 		 
 		if( user.provider != 'local' )
-			rest.status( 401 ); // bad request
+			res.status( 401 ); // bad request
 
 		//	udpate the fields in the retrieved zone with the user-supplied values:			
 		user.password = req.param( 'password' );
@@ -312,13 +352,13 @@ exports.updateUser = function( req, res )
 	} );
 };
 
-//	deletes the zone
+//	deletes the user
 exports.deleteUser = function( req, res )
 {
 	var id = req.params.id;
 	console.log( 'Delete single user', id );
 		
-	User.loadByNumber( id, function( err, zone )
+	User.loadByNumber( id, function( err, user )
 	{
 		if( err )
 		{
@@ -326,13 +366,13 @@ exports.deleteUser = function( req, res )
 			res.status( 500 ).send( 'User', id, 'not found' );
 		}
 		
-		if( !zone )
+		if( !user )
 		{
 			res.status( 400 ).json( );	//	400: bad request, no such zone
 		}
 		else
 		{
-			User.remove( { _id: zone._id }, function( err )
+			User.remove( { _id: user._id }, function( err )
 			{
 				if( err )
 				{
@@ -340,7 +380,7 @@ exports.deleteUser = function( req, res )
 					res.status( 500 ).send( 'User', id, 'error' );
 				}
 				
-				res.status( 410 ).json( );		//	410: resource gone
+				res.status( 200 ).json( );		//	410: resource gone
 			} );
 		}
 	} );

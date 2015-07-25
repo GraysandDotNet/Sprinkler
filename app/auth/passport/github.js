@@ -11,13 +11,9 @@ var User = mongoose.model('User');
  * Expose
  */
 
-
-GRAYSAND_GITHUB_CLIENTID = '574ac4ffa374e66ae422';
-GRAYSAND_GITHUB_CLIENTSECRET = 'c2e68fab047b55fa134af90ad971fcfa02adae4d';
-GRAYSAND_GITHUB_AUTHCALLBACK = 'http://localhost:1337/auth/github/callback';
-
 module.exports = function( auth )
 {
+
 	return new GithubStrategy( 
 		{
 			clientID: auth.clientID,
@@ -27,8 +23,11 @@ module.exports = function( auth )
 		function( accessToken, refreshToken, profile, done )
 		{
 			var options = {
-							criteria: { 'github.id': profile.id }
+							criteria: { provider : 'github', 
+										'providerData.id': profile.id
+									  }
 						  };
+
 			User.load( options, function( err, user )
 			{
 				if( err )
@@ -37,14 +36,21 @@ module.exports = function( auth )
 					return done( err );
 				}
 
-				if( !user )
+				if( !user ) 
 				{
+					var githubData = profile._json;
+					
+					var photo = 'images\avatar.png';
+					if (githubData && githubData.avatar_url)
+						photo = githubData.avatar_url;
+
 					user = new User( {
 										name: profile.displayName,
+										avatar: photo,
 										email: profile.emails[0].value,
 										username: profile.username,
 										provider: 'github',
-										github: profile._json
+										providerData: githubData
 									} );
 					
 					user.save( function( err )

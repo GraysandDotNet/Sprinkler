@@ -8,15 +8,15 @@ var LocalStrategy = require('passport-local').Strategy;
 var User = mongoose.model('User');
 
 /**
- * Expose  : Find by email.  I'd also like a find by username
+ * Expose  : Find by username, match on password
  */
 module.exports = new LocalStrategy( {	usernameField: 'username',
 										passwordField: 'password'
 									},
 	function( username, password, done ) 
 	{
-		var options = { criteria: { username: username },
-						select: 'name username email hashed_password salt'
+		var options = { criteria: { username: username, provider: 'local' },
+						select: 'name username email avatar hashed_password salt'
 					  };
 		//	invoke the UserSchema.static function 'load' 
 		//	from \app\models\user.js
@@ -40,5 +40,4 @@ module.exports = new LocalStrategy( {	usernameField: 'username',
 			//	we found user, and password matches hashed version 
 			return done(null, user);
 		});
-	}
-);
+	});

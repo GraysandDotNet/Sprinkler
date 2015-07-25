@@ -10,9 +10,9 @@ var Schema = mongoose.Schema;
 
 var authEnum = 
 	{
-		none: 0,
-		user: 1,
-		admin: 2
+		none: { val: 0, str: 'none' },
+		user: { val: 1, str: 'User' },
+		admin: { val: 2, str: 'Administrator' }
 	};
 
 var authProviders = 
@@ -28,7 +28,7 @@ var authProviders =
 */
 var UserSchema = new Schema(
 	{
-		priv: { type: authEnum, default: authEnum.user },
+		priv: { type: authEnum, default: authEnum.user.val },
 		
 		username: { type: String, default: '' },
 		avatar: { type: String, default: '' },
@@ -241,7 +241,7 @@ UserSchema.statics =
    */
 	load: function( options, cb ) 
 	{
-		options.select = options.select || 'name username avatar provider providerData';
+		options.select = options.select || '_id name username avatar provider providerData';
 		this.findOne(options.criteria)
 			.select(options.select)
 			.exec(cb);

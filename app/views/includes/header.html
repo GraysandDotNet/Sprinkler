@@ -24,20 +24,24 @@
   		<ul class="nav navbar-nav navbar-right">
 		  	{% if (req.isAuthenticated()) %}			 
 		  		<li>
+
+					  <!-- req user properties are loaded by the loggedInMiddleware following initial login -->
 					<a href='/users'>
+						{% if ( req.provider == 'live' ) %}
+						<img height="24" width="24" src="/images/auth/windows.png" alt="windows auth">
+						{% endif %}
+
+						{% if ( req.provider =='google' ) %}
+						<img height="24" width="24" src="/images/auth/google.png" alt="google auth">
+						{% endif %}
+
+						{% if ( req.provider == 'github' ) %}
+						<img height="24" width="24" src="/images/auth/github.png" alt="github auth">
+						{% endif %}
+
 						{{req.userName}}
-	
-					{% if ( req.provider == 'live' ) %}
-		  				<img height="24" width="24" src="/images/auth/windows.png" alt="windows auth">
-		  			{% endif %}
 
-		  			{% if ( req.provider =='google' ) %}
-		  				<img height="24" width="24" src="/images/auth/google.png" alt="google auth">
-		  			{% endif %}
-
-		  			{% if ( req.provider == 'github' ) %}
-		  				<img height="24" width="24" src="/images/auth/github.png" alt="github auth">
-		  			{% endif %}
+						<img height="24" width="24" src="{{req.avatar}}" />
 				  </a>
 			  </li>
 

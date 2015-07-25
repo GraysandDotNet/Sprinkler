@@ -86,7 +86,7 @@ var onOpen = function()
 	
 	//	look for a local user:
 	var options = {
-					criteria: { username: 'admin' },
+					criteria: { username: 'admin', provider: 'local' },
 					select: 'username'
 				 };
 	
@@ -106,7 +106,7 @@ var onOpen = function()
 			var adminUser = new User( {
 										username: 'admin', 
 										password: 'admin',
-										email: 'admin@sprinkler.pi',
+										avatar: 'images/avatar.png',
 										name: 'Administrator',
 										priv: 2,
 										provider: 'local'

@@ -23,7 +23,7 @@ module.exports = function( auth )
 		{
 			var options = {
 							criteria: { provider : 'google', 
-										  'providerData.id': profile.id
+										'providerData.id': profile.id
 									  }
 						  };
 		
@@ -36,10 +36,10 @@ module.exports = function( auth )
 			
 			if( !user )
 			{
-				var photo = '';
+				var photo = 'images/avatar.png';
 				var googleData = profile._json;
-					if( googleData )
-						photo = googleData.image.url; // url.parse( googleData.image.url );
+				if( googleData && googleData.image && googleData.image.url )
+					photo = googleData.image.url; // url.parse( googleData.image.url );
 
 				//	if we haven't found user in local db, instantiate from provider data
 				user = new User( {
@@ -48,7 +48,7 @@ module.exports = function( auth )
 									email: profile.emails[0].value,
 									username: profile.username,
 									provider: 'google',
-									providerData: profile._json
+									providerData: googleData
 								} );
 				
 				//	and save the newly instantiated user to db:

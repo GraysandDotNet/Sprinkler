@@ -84,10 +84,10 @@ module.exports = function( args ) //	args is of type requireArgs
 	} );
 	
 	
-	var local = require( './passport/local' );
-	var google = require( './passport/google' )(config.auth.google);
-	var windows = require( './passport/liveid' )(config.auth.liveId);
-	var github = require( './passport/github' )(config.auth.github);
+	var local	= require( './passport/local' );
+	var google	= require( './passport/google' )(config.auth.google);
+	var windows = require( './passport/liveid' )(config.auth.live);
+	var github	= require( './passport/github' )(config.auth.github);
 
 	// use these strategies
 	passport.use( local );

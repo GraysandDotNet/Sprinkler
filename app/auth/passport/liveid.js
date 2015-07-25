@@ -11,10 +11,6 @@ var User = mongoose.model('User');
  * Expose
  */
 
-GRAYSAND_LIVEID_CLIENTID = '00000000401588CE ';
-GRAYSAND_LIVEID_CLIENTSECRET = 'BIbeHIYZy0X47qIAskiwdhHonWagNyMM';
-GRAYSAND_LIVEID_AUTHCALLBACK = 'http://localhost:1337/auth/live/callback';
-
 
 /*
  * https://login.live.com/err.srf?lc=1033#error=invalid_request&error_description=The+provided+value+for+the+input+parameter+'redirect_uri'+is+not+valid.+The+expected+value+is+'https://login.live.com/oauth20_desktop.srf'+or+a+URL+which+matches+the+redirect+URI+registered+for+this+client+application.
@@ -26,30 +22,39 @@ module.exports = function( auth )
 		{
 			clientID:		auth.clientID,
 			clientSecret:	auth.clientSecret,
-			callbackURL: auth.callbackURL
+			callbackURL:	auth.callbackURL
 		},		
 		function( accessToken, refreshToken, profile, done )
 		{
 			var options = {
 							criteria: {
-										 provider : 'liveid', 
+										 provider : 'live', 
 										 'providerData.id': profile.id
 									  }
 							};
-		
+			
+		//	invoke the UserSchema.static function 'load' 
+		//	from \app\models\user.js
 		User.load( options, function( err, user )
 		{
 			if( err )
 				return done( err );
 			
-			if( !user )
+			if( !user ) 
 			{
+				var liveData = profile._json;
+					
+				var photo = 'images/avatar.png';
+				if (liveData && profile.photos && profile.photos[0].value )
+					photo = profile.photos[0].value; // url.parse( googleData.image.url );
+
 				user = new User( {
 									name: profile.displayName,
+									avatar: photo, 
 									email: profile.emails[0].value,
 									username: profile.emails[0].value,
-									provider: 'liveid',
-									providerData: profile._json
+									provider: 'live',
+									providerData: liveData
 								} );
 				
 				//	and save the newly instantiated user to db:

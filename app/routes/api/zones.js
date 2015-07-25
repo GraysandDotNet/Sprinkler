@@ -28,13 +28,12 @@ module.exports = function( args )	//	args is of type requireArgs
 	PUT /api/zone / 1 — Update booking ID 1
 	DELETE /api / zone / 1 — Delete booking ID 1
 	*/
-	app.get( '/api/zone', zones.getAll );			//	get all currently defined zones
-
-	app.post( '/api/zone', zones.newZone );			//	create a new zone, with form data
-	app.get( '/api/zone/:id', zones.getZone );		//	get specified zone
-	app.put( '/api/zone/:id', zones.updateZone );	//	update specified zone, with zoneid in url
-	app.put( '/api/zone', zones.updateZone );		//	update specified zone, with form data
-	app.delete( '/api/zone/:id', zones.deleteZone );//	delete specified zone
+	app.get( '/api/zone', loggedInMiddlewareFunctions, zones.getAll );			//	get all currently defined zones
+	app.post( '/api/zone', loggedInMiddlewareFunctions, zones.newZone );		//	create a new zone, with form data
+	app.get( '/api/zone/:id', loggedInMiddlewareFunctions, zones.getZone );		//	get specified zone
+	app.put( '/api/zone/:id', loggedInMiddlewareFunctions, zones.updateZone );	//	update specified zone, with zoneid in url
+	app.put( '/api/zone', loggedInMiddlewareFunctions, zones.updateZone );		//	update specified zone, with form data
+	app.delete( '/api/zone/:id', loggedInMiddlewareFunctions, zones.deleteZone );//	delete specified zone
 
 	console.log( 'Zones routes initialized' );
 }
