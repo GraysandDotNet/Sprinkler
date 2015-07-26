@@ -4,7 +4,6 @@ var app = angular.module("sprinklerApp", [ "xeditable", "ngResource" ]);
 app.factory( "UserApi", function( $resource )
 {
 	return $resource(	"/api/user/:id",
-						{ id: "@_id" },	//	auto-extract _id from given data, and insert into url
 	   {
 	   	'save': { method: 'POST' },
 	   	'getAll': { method: 'GET', isArray: true },
