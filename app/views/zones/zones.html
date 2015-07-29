@@ -5,11 +5,24 @@
 {% endblock %}
 
 {% block content %}
+
+<script>
+    function swigTemplateData()
+    {
+        return { zones: {{ zones | raw | json }}
+        };
+    }
+</script>
+
 	{% raw %}
-	<!-- Angular -->
-	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<!-- Angular -->
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-resource.js"></script>
+
+<script src="javascripts/xeditable.js"></script>
+
 	<!-- Angular controllers -->
-	<script src="javascripts/controllers.js"></script>
+	<script src="javascripts/zoneController.js"></script>
 
 	<div ng-app="sprinklerApp">
 		<div ng-controller="zoneCtrl">

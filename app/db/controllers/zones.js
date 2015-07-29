@@ -11,10 +11,22 @@ var Zone = mongoose.model( 'Zone' );
 //		SWIG page rendering
 exports.zonesPage = function( req, res )
 {
-	var templateData = { title: 'Zones' };
+   
+    Zone.find('number name tLastChange state', function (err, zones) {
+        if (err) {
+            console.dir(err);
+            return res.status(500).send(err);
+        }
+            var templateData = {
+            title: 'Zones',
+            zones: zones
+        };
+  
+        res.render('zones/zones', 
+				templateData);   
+    });
+
 	
-	res.render( 'zones/zones', 
-				templateData );
 };
 
 //	REST API methods:

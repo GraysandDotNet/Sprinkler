@@ -1,3 +1,4 @@
+/// <reference path="../../app/db/controllers/users.js" />
 var app = angular.module("sprinklerApp", [ "xeditable", "ngResource" ]);
 
 
